@@ -1,0 +1,431 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -704,
+        -48
+      ],
+      "id": "b29f28b9-0d0c-40f3-bc2e-c2e0b46d3ad9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "active",
+              "lookupValue": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        -224
+      ],
+      "id": "4d6fe7b2-3563-408c-aedf-b354ee045a6f",
+      "name": "Get Active Users",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tZHakDA2t1XrtL60",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1411934031,
+          "mode": "list",
+          "cachedResultName": "areas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=1411934031"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        112
+      ],
+      "id": "7b7a3310-875f-4a9d-9786-a6f5e02c4df5",
+      "name": "Get Area",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "tZHakDA2t1XrtL60",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "area_code",
+              "field2": "area_code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -192,
+        -64
+      ],
+      "id": "f45b397e-df29-4880-8a98-3456da6bceae",
+      "name": "Merge Active User and Area"
+    },
+    {
+      "parameters": {
+        "jsCode": "const codes = $json.area_code || [];\nreturn codes.map(code => ({ json: { area_code: code } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -64
+      ],
+      "id": "74efa318-cf5a-491d-8d27-0be4b49ee83c",
+      "name": "Re-mapping",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "area_code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        16,
+        -64
+      ],
+      "id": "3312f5e4-ab17-47ba-b829-d1748ffec43f",
+      "name": "Group By area"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        432,
+        -64
+      ],
+      "id": "041281e3-745c-4a44-aba6-86e3f7f5d469",
+      "name": "Loop Over Items",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamCungCapDien",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "madvi",
+              "value": "={{ $('Re-mapping').item.json.area_code }}"
+            },
+            {
+              "name": "tuNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "denNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').plus({days: 3}).toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "ChucNang",
+              "value": "MaDonVi"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        32
+      ],
+      "id": "7ab7bf67-b5b8-43ef-bc9f-c3cbaa9d5912",
+      "name": "HTTP Request",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "rows",
+              "cssSelector": ".entry",
+              "returnValue": "html"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        848,
+        32
+      ],
+      "id": "d667299f-d80f-4d25-89ea-40e09845896e",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "rows"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        32
+      ],
+      "id": "8a8de056-d121-46bb-b7a4-a4fdfde7d1f4",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "rows[0]",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "where",
+              "cssSelector": ".where"
+            },
+            {
+              "key": "time_raw",
+              "cssSelector": ".time"
+            },
+            {
+              "key": "cause",
+              "cssSelector": ".cause"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        32
+      ],
+      "id": "fc231e99-a9c5-49ef-b719-d1b4ec377713",
+      "name": "HTML1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Active Users",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Active Users": {
+      "main": [
+        [
+          {
+            "node": "Merge Active User and Area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Area": {
+      "main": [
+        [
+          {
+            "node": "Merge Active User and Area",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Active User and Area": {
+      "main": [
+        [
+          {
+            "node": "Group By area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group By area": {
+      "main": [
+        [
+          {
+            "node": "Re-mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re-mapping": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1955d9dc-ab76-464e-a4a6-457d3ce7f860",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c032ea0a5bf108863f2ed5a1e769a0889e7dcb3ee1b1ae1be52bd4ad18754b9d"
+  },
+  "id": "TburGadMqQk9HAkd",
+  "tags": []
+}
