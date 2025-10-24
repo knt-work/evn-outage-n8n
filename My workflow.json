@@ -14,10 +14,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -704,
-        -48
+        -288,
+        80
       ],
-      "id": "b29f28b9-0d0c-40f3-bc2e-c2e0b46d3ad9",
+      "id": "09223e2f-edfe-42f9-8a17-be060de52ec8",
       "name": "Schedule Trigger"
     },
     {
@@ -49,15 +49,15 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -464,
-        -224
+        16,
+        -208
       ],
-      "id": "4d6fe7b2-3563-408c-aedf-b354ee045a6f",
+      "id": "71d6cc6f-d385-4408-848a-c1c9aea8d2cc",
       "name": "Get Active Users",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "tZHakDA2t1XrtL60",
-          "name": "Google Sheets account"
+          "id": "INvoDGNsdixdXhP9",
+          "name": "Google Sheets account 2"
         }
       }
     },
@@ -82,14 +82,14 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -464,
-        112
+        0,
+        336
       ],
-      "id": "7b7a3310-875f-4a9d-9786-a6f5e02c4df5",
+      "id": "d88ee670-971e-429d-9cb9-485f633e82d9",
       "name": "Get Area",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "tZHakDA2t1XrtL60",
+          "id": "ypJBFG4XsC0wnKMV",
           "name": "Google Sheets account"
         }
       }
@@ -111,10 +111,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -192,
-        -64
+        256,
+        48
       ],
-      "id": "f45b397e-df29-4880-8a98-3456da6bceae",
+      "id": "39635767-ed0c-4535-8878-f146af9a5cf7",
       "name": "Merge Active User and Area"
     },
     {
@@ -124,10 +124,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        224,
-        -64
+        688,
+        160
       ],
-      "id": "74efa318-cf5a-491d-8d27-0be4b49ee83c",
+      "id": "8b173b29-8b46-45f2-b1e9-147c5cf35b1d",
       "name": "Re-mapping",
       "alwaysOutputData": true
     },
@@ -145,10 +145,10 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        16,
-        -64
+        480,
+        160
       ],
-      "id": "3312f5e4-ab17-47ba-b829-d1748ffec43f",
+      "id": "59c9ddb9-7830-45f6-91a4-3b910ff3881c",
       "name": "Group By area"
     },
     {
@@ -160,10 +160,10 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        432,
-        -64
+        896,
+        160
       ],
-      "id": "041281e3-745c-4a44-aba6-86e3f7f5d469",
+      "id": "3fef244b-f5a6-4b41-94d3-a5ba17cdc92f",
       "name": "Loop Over Items",
       "alwaysOutputData": true
     },
@@ -205,10 +205,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        640,
-        32
+        1072,
+        384
       ],
-      "id": "7ab7bf67-b5b8-43ef-bc9f-c3cbaa9d5912",
+      "id": "e0c2ba63-1b0f-46a1-a71f-58c7a33fc574",
       "name": "HTTP Request",
       "alwaysOutputData": true
     },
@@ -220,7 +220,8 @@
             {
               "key": "rows",
               "cssSelector": ".entry",
-              "returnValue": "html"
+              "returnValue": "html",
+              "returnArray": true
             }
           ]
         },
@@ -229,11 +230,12 @@
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        848,
-        32
+        1280,
+        512
       ],
-      "id": "d667299f-d80f-4d25-89ea-40e09845896e",
-      "name": "HTML"
+      "id": "a1736c26-b8d1-4484-a0fc-0b59bd4276ac",
+      "name": "HTML",
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -249,10 +251,10 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1056,
-        32
+        1488,
+        624
       ],
-      "id": "8a8de056-d121-46bb-b7a4-a4fdfde7d1f4",
+      "id": "9940651a-6625-449c-a6b4-fec81022d5f9",
       "name": "Aggregate"
     },
     {
@@ -263,15 +265,18 @@
           "values": [
             {
               "key": "where",
-              "cssSelector": ".where"
+              "cssSelector": ".where",
+              "returnArray": true
             },
             {
               "key": "time_raw",
-              "cssSelector": ".time"
+              "cssSelector": ".time",
+              "returnArray": true
             },
             {
               "key": "cause",
-              "cssSelector": ".cause"
+              "cssSelector": ".cause",
+              "returnArray": true
             }
           ]
         },
@@ -280,11 +285,41 @@
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        1264,
-        32
+        1856,
+        736
       ],
-      "id": "fc231e99-a9c5-49ef-b719-d1b4ec377713",
-      "name": "HTML1"
+      "id": "274a6c59-4271-436e-baff-cbeb9ee2be49",
+      "name": "HTML1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2368,
+        736
+      ],
+      "id": "491d4336-42fb-4df9-b659-adb863e5ddf9",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// nhận toàn bộ items từ cổng \"done\"\nconst all = $input.all();\nconsole.log(`[Guard] received items: ${all.length}`);\n\nif (all.length === 0) {\n  // không có dữ liệu -> dừng nhánh\n  return [];\n}\n\n// (tuỳ chọn) lọc rỗng/invalid trước khi cho qua\n// const filtered = all.filter(i => i.json.area_code && i.json.where && i.json.time_raw);\n// return filtered;\n\nreturn all;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1184,
+        -48
+      ],
+      "id": "aaadf177-68d4-445c-a7f5-506fe3482791",
+      "name": "Code: Guard"
     }
   ],
   "pinData": {},
@@ -362,10 +397,21 @@
     },
     "Loop Over Items": {
       "main": [
-        [],
+        [
+          {
+            "node": "Code: Guard",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
@@ -409,11 +455,27 @@
       "main": [
         [
           {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
             "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Code: Guard": {
+      "main": [
+        []
       ]
     }
   },
@@ -421,11 +483,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "1955d9dc-ab76-464e-a4a6-457d3ce7f860",
+  "versionId": "e359bf15-d407-4929-9617-0a1e457eb4b8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "c032ea0a5bf108863f2ed5a1e769a0889e7dcb3ee1b1ae1be52bd4ad18754b9d"
   },
-  "id": "TburGadMqQk9HAkd",
+  "id": "JDQtKqFUQfYViCFF",
   "tags": []
 }
