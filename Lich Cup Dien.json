@@ -1,0 +1,572 @@
+{
+  "name": "Lich Cup Dien",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        288
+      ],
+      "id": "dbd378b3-d9c6-4657-bc66-d10d4ad4a4ac",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "active",
+              "lookupValue": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        0,
+        0
+      ],
+      "id": "507a481b-9350-4977-a1fe-227b9d8f5949",
+      "name": "Get Active Users",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jEXwwxSGe1DBHR9T",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1411934031,
+          "mode": "list",
+          "cachedResultName": "areas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=1411934031"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        544
+      ],
+      "id": "91682f6a-53f5-4b5a-8358-4d54591ce612",
+      "name": "Get Area",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jEXwwxSGe1DBHR9T",
+          "name": "Google Sheets account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "area_code",
+              "field2": "area_code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        240,
+        256
+      ],
+      "id": "2bf33030-d2e3-4b82-8d28-52198c299a0e",
+      "name": "Merge Active User and Area"
+    },
+    {
+      "parameters": {
+        "jsCode": "const codes = $json.area_code || [];\nreturn codes.map(code => ({ json: { area_code: code } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        368
+      ],
+      "id": "a38581d0-f18a-498b-8c0a-f8ff230336ec",
+      "name": "Re-mapping",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "area_code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        464,
+        368
+      ],
+      "id": "429f0d6b-68d2-4e2d-91d4-5d67cdf07b1a",
+      "name": "Group By area"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        880,
+        368
+      ],
+      "id": "352f8611-8ef0-4f60-95e6-d5ec05bdbf21",
+      "name": "Loop Over Items",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamCungCapDien",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "madvi",
+              "value": "={{ $('Re-mapping').item.json.area_code }}"
+            },
+            {
+              "name": "tuNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "denNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').plus({days: 3}).toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "ChucNang",
+              "value": "MaDonVi"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1056,
+        592
+      ],
+      "id": "f6f3ee2d-7d96-4f9e-9f51-bf3317d891e3",
+      "name": "HTTP Request",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "rows",
+              "cssSelector": ".entry",
+              "returnValue": "html",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1264,
+        720
+      ],
+      "id": "b7de69ab-fd25-4920-9ef9-1e8f049cbc83",
+      "name": "HTML",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "rows"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        832
+      ],
+      "id": "f6b68350-6ab2-4f0a-9842-ffcbd2d308f3",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "rows[0]",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "where",
+              "cssSelector": ".where",
+              "returnArray": true
+            },
+            {
+              "key": "time_raw",
+              "cssSelector": ".time",
+              "returnArray": true
+            },
+            {
+              "key": "cause",
+              "cssSelector": ".cause",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1840,
+        944
+      ],
+      "id": "569b3e60-4da3-47ba-b8ae-37b2b54bd06a",
+      "name": "HTML1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2352,
+        944
+      ],
+      "id": "6ad6f08a-cff0-46ce-98a5-4b2bc2d79988",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// nhận toàn bộ items từ cổng \"done\"\nconst all = $input.all();\nconsole.log(`[Guard] received items: ${all.length}`);\n\nif (all.length === 0) {\n  // không có dữ liệu -> dừng nhánh\n  return [];\n}\n\n// (tuỳ chọn) lọc rỗng/invalid trước khi cho qua\n// const filtered = all.filter(i => i.json.area_code && i.json.where && i.json.time_raw);\n// return filtered;\n\nreturn all;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        240
+      ],
+      "id": "7a7991cf-3af9-41be-b7db-c0abe5a2d2d4",
+      "name": "Code: Guard"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node — Run Once for All Items\n * Output: [\n *   {\n *     user: { id, name, phone_number, channel, area_code, keyword },\n *     lich_cup: [ { khu_vuc, thoi_gian_cup }, ... ]\n *   },\n *   ...\n * ]\n * Đổi tên 2 node bên dưới cho đúng flow của bạn.\n */\nconst NODE_USERS   = \"Get Active Users\"; // node chứa danh sách user active\nconst NODE_RESULTS = \"Results\";          // node chứa danh sách bản ghi cúp điện\n\n// ------------------ Helpers ------------------\nfunction normalizeStr(s) {\n  if (typeof s !== 'string') return '';\n  return s.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();\n}\n\nfunction cleanWhere(text) {\n  if (!text || typeof text !== 'string') return '';\n  let s = text.replace(/^\\s*KHU\\s*VỰC\\s*:\\s*/i, '').trim(); // bỏ tiền tố \"KHU VỰC:\"\n  s = s.replace(/\\s+/g, ' '); // gom khoảng trắng\n  return s;\n}\n\nfunction toStringOrFirst(v) {\n  if (Array.isArray(v)) return v[0] ?? '';\n  return typeof v === 'string' ? v : '';\n}\n\n// ------------------ Load USERS (không nối dây) ------------------\nlet usersItems = [];\ntry {\n  usersItems = $items(NODE_USERS);\n} catch (e) {\n  throw new Error(`Không tìm thấy node \"${NODE_USERS}\" hoặc node chưa chạy: ${e.message}`);\n}\n\nlet users = usersItems.map(i => i.json);\n\n// Trường hợp node trả 1 item gói mảng\nif (users.length === 1 && Array.isArray(users[0])) users = users[0];\n// Hoặc gói trong field users/data\nif (users.length === 1 && typeof users[0] === 'object') {\n  const u0 = users[0];\n  if (Array.isArray(u0.users)) users = u0.users;\n  else if (Array.isArray(u0.data)) users = u0.data;\n}\n\n// Chỉ lấy user active\nusers = users.filter(u => u?.active);\n\n// ------------------ Load RESULTS (ưu tiên input, fallback $items) ------------------\nlet results = $input.all().map(i => i.json);\nif (!results.length) {\n  try {\n    const resItems = $items(NODE_RESULTS);\n    results = resItems.map(i => i.json);\n    if (results.length === 1 && Array.isArray(results[0])) results = results[0];\n    const r0 = results[0];\n    if (results.length === 1 && r0 && typeof r0 === 'object') {\n      if (Array.isArray(r0.results)) results = r0.results;\n      else if (Array.isArray(r0.data)) results = r0.data;\n    }\n  } catch (e) {\n    // bỏ qua, sẽ kiểm tra length ngay sau\n  }\n}\nif (!results.length) {\n  throw new Error(`Không có dữ liệu cúp điện từ input hoặc node \"${NODE_RESULTS}\".`);\n}\n\n// ------------------ Khử trùng RESULTS ------------------\n// Key trùng: area_code + whereClean + timeRawStr\nconst seenRes = new Set();\nconst dedupResults = [];\nfor (const r of results) {\n  const area = r.area_code || r.areaCode || r.area || '';\n  const whereRaw = Array.isArray(r.where) ? r.where.join(' ; ') : (r.where || '');\n  const whereClean = cleanWhere(whereRaw);\n  const timeRawStr = toStringOrFirst(r.time_raw);\n\n  const k = `${area}__${normalizeStr(whereClean)}__${normalizeStr(timeRawStr)}`;\n  if (seenRes.has(k)) continue;\n  seenRes.add(k);\n\n  dedupResults.push({\n    ...r,\n    area_code: area,\n    where: whereClean,     // lưu where đã clean\n    time_raw: timeRawStr,  // chuẩn hoá về string\n  });\n}\nresults = dedupResults;\n\n// ------------------ Index theo area_code ------------------\nconst byArea = new Map();\nfor (const r of results) {\n  const ac = r.area_code || '';\n  if (!byArea.has(ac)) byArea.set(ac, []);\n  byArea.get(ac).push(r);\n}\n\n// ------------------ Match & Group -> { user, lich_cup[] } ------------------\nconst byUser = new Map();\n\nfor (const u of users) {\n  const area = u.area_code || u.areaCode || '';\n  const kw = String(u.keyword || '').trim();\n  if (!area || !kw) continue;\n\n  const cand = byArea.get(area) || [];\n  if (!cand.length) continue;\n\n  const kwLower = kw.toLowerCase();\n  const kwNorm  = normalizeStr(kw);\n\n  for (const rec of cand) {\n    const whereText = typeof rec.where === 'string' ? rec.where : cleanWhere(rec.where);\n    const whereLower = whereText.toLowerCase();\n    const whereNorm  = normalizeStr(whereText);\n\n    // 2 lớp match: có dấu & không dấu (đều không phân biệt hoa/thường)\n    const accentedHit   = whereLower.includes(kwLower);\n    const unaccentedHit = whereNorm.includes(kwNorm);\n    if (!accentedHit && !unaccentedHit) continue;\n\n    // Tạo bucket cho user nếu chưa có\n    if (!byUser.has(u.id)) {\n      byUser.set(u.id, {\n        user: {\n          id: u.id,\n          name: u.name,\n          phone_number: u.phone_number,\n          channel: u.channel,\n          area_code: area,\n          keyword: kw,\n        },\n        lich_cup: [],\n        _seenKeys: new Set(), // để khử trùng trong lich_cup của user\n      });\n    }\n\n    const thoiGian = rec.time_raw; // đã chuẩn hoá string ở trên\n    const userBucket = byUser.get(u.id);\n    const lcKey = `${normalizeStr(whereText)}__${normalizeStr(thoiGian)}`;\n    if (!userBucket._seenKeys.has(lcKey)) {\n      userBucket._seenKeys.add(lcKey);\n      userBucket.lich_cup.push({\n        khu_vuc: whereText,\n        thoi_gian_cup: thoiGian,\n      });\n    }\n  }\n}\n\n// ------------------ Hoàn thiện output ------------------\n// (Tuỳ chọn) Nếu muốn vẫn trả user không có lịch, mở khối dưới:\n// for (const u of users) {\n//   if (!byUser.has(u.id)) {\n//     byUser.set(u.id, {\n//       user: {\n//         id: u.id,\n//         name: u.name,\n//         phone_number: u.phone_number,\n//         channel: u.channel,\n//         area_code: u.area_code || u.areaCode || '',\n//         keyword: String(u.keyword || '').trim(),\n//       },\n//       lich_cup: [],\n//       _seenKeys: new Set(),\n//     });\n//   }\n// }\n\n// Sắp xếp lich_cup theo chuỗi thời gian (tuỳ chọn)\nfor (const v of byUser.values()) {\n  v.lich_cup.sort((a, b) => a.thoi_gian_cup.localeCompare(b.thoi_gian_cup));\n  delete v._seenKeys; // dọn dẹp\n}\n\n// Trả 1 item / user\nreturn Array.from(byUser.values()).map(x => ({ json: x }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        0
+      ],
+      "id": "be884cf7-f6be-431a-b060-8b3f1633663e",
+      "name": "Lọc lấy user có lịch cúp điện"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1808,
+        -32
+      ],
+      "id": "24fa603d-a654-46a1-a982-96ec02a05e21",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node — Run Once for All Items\n// Input items: [{ user: {...}, lich_cup: [{khu_vuc, thoi_gian_cup}, ...] }, ...]\n// Output items: one item per message:\n// { to, channel, user_id, user_name, area_code, keyword, khu_vuc, thoi_gian_cup, message }\n\n// ====== CONFIG NHANH ======\nconst SENDER_NAME = \"EVN Bot\";      // chữ ký cuối tin nhắn\nconst BRAND_NAME  = \"Nhựt Triều\"; // tên thương hiệu gợi ý\n\n// Tùy chọn: nếu chỉ muốn lấy lịch đầu tiên cho mỗi user, đặt true\nconst ONLY_FIRST_OUTAGE = false;\n\n// ====== TEMPLATE TIN NHẮN ======\n// Bạn có thể chỉnh sửa nội dung trong template dưới:\nfunction buildMessage({ name, khu_vuc, thoi_gian_cup }) {\n  return [\n    `Chào ${name},`,\n    `Khu vực ${khu_vuc} dự kiến cúp điện: ${thoi_gian_cup}.`,\n    `Vui lòng chuẩn bị thiết bị cần thiết (điện thoại, modem, nguồn dự phòng).`,\n    `Trân trọng, ${BRAND_NAME} – ${SENDER_NAME}.`\n  ].join(\" \");\n}\n\n// ====== MAIN ======\nconst inputs = $input.all().map(i => i.json);\nconst out = [];\n\nfor (const item of inputs) {\n  const u = item.user || {};\n  const list = Array.isArray(item.lich_cup) ? item.lich_cup : [];\n  if (!u?.id || !list.length) continue;\n\n  const each = ONLY_FIRST_OUTAGE ? [list[0]] : list;\n\n  for (const lc of each) {\n    const msg = buildMessage({\n      name: u.name || \"Quý khách\",\n      khu_vuc: lc.khu_vuc || \"\",\n      thoi_gian_cup: lc.thoi_gian_cup || \"\"\n    });\n\n    out.push({\n      json: {\n        to: u.phone_number || \"\",       // số ĐT để gửi (Zalo/SMS)\n        channel: u.channel || \"zalo\",   // kênh\n        user_id: u.id,\n        user_name: u.name || \"\",\n        area_code: u.area_code || \"\",\n        keyword: u.keyword || \"\",\n        khu_vuc: lc.khu_vuc || \"\",\n        thoi_gian_cup: lc.thoi_gian_cup || \"\",\n        message: msg\n      }\n    });\n  }\n}\n\nreturn out;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        64
+      ],
+      "id": "294127a7-1821-4e19-b1de-3ce0f003c40c",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Active Users",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Active Users": {
+      "main": [
+        [
+          {
+            "node": "Merge Active User and Area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Area": {
+      "main": [
+        [
+          {
+            "node": "Merge Active User and Area",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Active User and Area": {
+      "main": [
+        [
+          {
+            "node": "Group By area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group By area": {
+      "main": [
+        [
+          {
+            "node": "Re-mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re-mapping": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code: Guard",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Guard": {
+      "main": [
+        [
+          {
+            "node": "Lọc lấy user có lịch cúp điện",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lọc lấy user có lịch cúp điện": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b8392f12-7263-4c26-974e-da0b71ea7bd1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c032ea0a5bf108863f2ed5a1e769a0889e7dcb3ee1b1ae1be52bd4ad18754b9d"
+  },
+  "id": "WF59kWxrtlDoYztx",
+  "tags": []
+}
