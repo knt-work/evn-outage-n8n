@@ -13,9 +13,12 @@ services:
       - WEBHOOK_URL=${WEBHOOK_URL}
       - TZ=${TZ}
       - N8N_DIAGNOSTICS_ENABLED=${N8N_DIAGNOSTICS_ENABLED}
+      - AI_OPENAI_API_KEY=${AI_OPENAI_API_KEY}
     volumes:
       - n8n_data:/home/node/.n8n
     restart: unless-stopped
+    env_file:
+      - .env
 
 volumes:
   n8n_data:

@@ -1,0 +1,1977 @@
+{
+  "name": "EVN Out Age Crawler",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "users",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "active",
+              "lookupValue": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2768,
+        320
+      ],
+      "id": "dbeb7591-19d0-43b2-937e-51e64f5a6914",
+      "name": "Get Active Users",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RcrZcrGMXIGC1JeG",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1411934031,
+          "mode": "list",
+          "cachedResultName": "areas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=1411934031"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2784,
+        1264
+      ],
+      "id": "02106908-f9dc-4855-b4e8-efe8e001ef3c",
+      "name": "Get Area",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RcrZcrGMXIGC1JeG",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "advanced": true,
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "area_code",
+              "field2": "area_code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2512,
+        768
+      ],
+      "id": "0ffbdf84-b125-4d23-a1d4-c51ed0a754aa",
+      "name": "Merge Active User and Area"
+    },
+    {
+      "parameters": {
+        "jsCode": "const codes = $json.area_code || [];\nreturn codes.map(code => ({ json: { area_code: code } }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2080,
+        768
+      ],
+      "id": "ff3fcfe2-eda7-4f25-bfee-a58416e736e2",
+      "name": "Re-mapping",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "area_code"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        768
+      ],
+      "id": "60914d66-9324-4345-bf7c-e8930167c949",
+      "name": "Group By area"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1808,
+        624
+      ],
+      "id": "f54fbf3d-cb23-44a4-afe4-96d370e35359",
+      "name": "Loop Over Items",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "rows",
+              "cssSelector": ".entry",
+              "returnValue": "html",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        1232
+      ],
+      "id": "4a52ea85-cb5e-4494-b409-0db04d84ac49",
+      "name": "HTML",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "rows"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1408,
+        1344
+      ],
+      "id": "9397d13c-7a01-4979-a10a-747e225dcb7a",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "dataPropertyName": "rows[0]",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "where",
+              "cssSelector": ".where",
+              "returnArray": true
+            },
+            {
+              "key": "time_raw",
+              "cssSelector": ".time",
+              "returnArray": true
+            },
+            {
+              "key": "cause",
+              "cssSelector": ".cause",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -1248,
+        1344
+      ],
+      "id": "f64cce37-7034-4811-a8a2-12614a20571b",
+      "name": "HTML1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -1088,
+        880
+      ],
+      "id": "a602ab62-a703-4356-b1d2-25f707697bf3",
+      "name": "Merge",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// nhận toàn bộ items từ cổng \"done\"\nconst all = $input.all();\n\nif (all.length === 0) {\n  // không có dữ liệu -> dừng nhánh\n  return [];\n}\n\n// (tuỳ chọn) lọc rỗng/invalid trước khi cho qua\n// const filtered = all.filter(i => i.json.area_code && i.json.where && i.json.time_raw);\n// return filtered;\n\nreturn all;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        880
+      ],
+      "id": "f125ce18-1615-45ee-a16a-0ef5bec87f2a",
+      "name": "Code: Guard"
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node — Run Once for All Items\n * This version:\n *  - DOES NOT check keyword match\n *  - ONLY filters schedules where startDateObj > today\n *  - Groups schedules per user by area_code\n *  - Removes duplicated schedules by 100%-match text (hash)\n */\n\nconst NODE_USERS   = \"Get Active Users\";\nconst NODE_RESULTS = \"Results\";\n\n// ------------------ Helper: normalize ------------------\nfunction normalizeStr(s) {\n  if (!s || typeof s !== \"string\") return \"\";\n  return s\n    .normalize(\"NFD\")\n    .replace(/[̀-ͯ]/g, \"\")\n    .toLowerCase()\n    .trim();\n}\n\n// ------------------ Load USERS ------------------\nlet usersItems = [];\ntry {\n  usersItems = $items(NODE_USERS);\n} catch (e) {\n  throw new Error(`Không tìm thấy node \"${NODE_USERS}\".`);\n}\n\n// ------------------ Load RESULTS ------------------\nlet results = $input.all().map(i => i.json);\n\nif (!results.length) {\n  try {\n    const r = $items(NODE_RESULTS).map(i => i.json);\n    results = r;\n  } catch (e) {}\n}\n\nif (!results.length) {\n  throw new Error(\"Không có dữ liệu lịch cúp điện.\");\n}\n\n// ------------------ Output ------------------\nconst userForMailing = [];\n\nconst today = new Date();\n\n// ------------------ Process ------------------\nfor (const user of usersItems) {\n\n  const userArea = user?.json?.area_code || \"\";\n\n  // Tạo object output\n  let entry = {\n    user: { ...user.json },\n    lich_cup: []\n  };\n\n  for (const rec of results) {\n\n    // Match theo area_code\n    if ((rec?.area_code || \"\") !== userArea) continue;\n\n    let startDate = rec?.time_raw?.[0] || \"\";\n\n    // Extract phần text nằm giữa \"ngày ... đến\"\n    const m = startDate.match(/ngày(.*?)đến/i);\n    if (m && m[1]) {\n      startDate = m[1].trim();\n    }\n\n    rec.startDate = startDate;\n\n    // Convert dd/mm/yyyy → Date object\n    const parts = startDate.split(\"/\");\n    if (parts.length === 3) {\n      const [d, m, y] = parts.map(n => parseInt(n.trim(), 10));\n      if (!isNaN(d) && !isNaN(m) && !isNaN(y)) {\n        rec.startDateObj = new Date(y, m - 1, d);\n      }\n    }\n\n    // Chỉ lấy lịch tương lai\n    if (!(rec.startDateObj instanceof Date)) continue;\n    if (rec.startDateObj <= today) continue;\n\n    // Build hash 100% text match\n    const hash =\n      normalizeStr(rec.where?.[0] || \"\") +\n      \"|\" +\n      normalizeStr(rec.time_raw?.[0] || \"\");\n\n    // Push tạm, sẽ lọc trùng sau\n    entry.lich_cup.push({\n      ...rec,\n      hash\n    });\n  }\n\n  // ------------------------\n  // 🔥 KHỬ TRÙNG 100% TEXT\n  // ------------------------\n  const seen = new Set();\n  const uniqueList = [];\n\n  for (const item of entry.lich_cup) {\n    if (!seen.has(item.hash)) {\n      seen.add(item.hash);\n      uniqueList.push(item);\n    }\n  }\n\n  entry.lich_cup = uniqueList;\n\n  // ------------------------\n  // Chỉ push nếu user còn lịch\n  // ------------------------\n  if (entry.lich_cup.length > 0) {\n    userForMailing.push(entry);\n  }\n}\n\nreturn userForMailing;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -720,
+        880
+      ],
+      "id": "03aa2195-60d0-467c-b530-223fb5c86463",
+      "name": "Get_User_For_Mail",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * n8n Code node — Run Once for All Items\n * Generate email_subject + email_body (HTML) cho từng user.\n */\n\nconst MAILING_NODE = \"Parse_AI_Result\";\n\n// ------------------ Load Users ------------------\nlet mailingUsers = [];\ntry {\n  mailingUsers = $items(MAILING_NODE).map(i => i.json);\n} catch (e) {\n  throw new Error(`Không tìm thấy node \"${MAILING_NODE}\" hoặc node chưa chạy: ${e.message}`);\n}\n\nconst output = [];\n\nfunction escapeHtml(str) {\n  return str?.replace?.(/[&<>\"']/g, function(m) {\n    return ({\n      '&': '&amp;',\n      '<': '&lt;',\n      '>': '&gt;',\n      '\"': '&quot;',\n      \"'\": '&#39;',\n    })[m];\n  }) || \"\";\n}\n\nfor (const entry of mailingUsers) {\n  const user = entry.user;\n  const schedules = entry.lich_cup || [];\n\n  // ------------------ SUBJECT ------------------\n  const subject = `[Thông báo lịch cúp điện] Khu vực ${user.area_code} – Có ${schedules.length} lịch`;\n\n  // ------------------ HTML EMAIL BODY ------------------\n  let body = `\n<div style=\"font-family: Arial, sans-serif; max-width:600px; margin:auto; background:#ffffff; padding:20px; color:#333; line-height:1.6;\">\n\n  <h2 style=\"margin-top:0; color:#2b7cff;\">\n    🔌 Thông báo cúp điện đến anh/chị ${escapeHtml(user.name)}\n  </h2>\n\n  <p style=\"margin:0 0 12px 0;\">\n    Chúng tôi nhận thấy khu vực anh/chị đang theo dõi có một số lịch ngừng cung cấp điện được công bố công khai từ hệ thống điện lực.\n    Vì vậy, chúng tôi xin gửi đến anh/chị thông tin tổng hợp để tiện theo dõi và chủ động trong sinh hoạt – công việc.\n  </p>\n\n  <hr style=\"border:none; border-top:1px solid #eee; margin:20px 0;\" />\n\n  <h3 style=\"color:#444; margin-bottom:10px;\">📋 DANH SÁCH CÁC LỊCH CÚP ĐIỆN</h3>\n\n  <ul style=\"padding-left:18px; margin:0;\">\n`;\n\n  // ------------------ LIST ITEMS ------------------\n  schedules.forEach((s, index) => {\n    const where = (s.where || []).map(w => escapeHtml(w)).join(\"<br>\");\n    const time = (s.time_raw || []).map(t => escapeHtml(t)).join(\"<br>\");\n    const cause = (s.cause || []).map(c => escapeHtml(c)).join(\"<br>\");\n\n    body += `\n    <li style=\"margin-bottom:15px;\">\n      <strong style=\"color:#2b7cff;\">Lịch số ${index + 1}</strong><br>\n      <div style=\"margin-top:6px;\">\n        <strong>Khu vực ảnh hưởng:</strong><br>${where}<br><br>\n        <strong>Thời gian dự kiến:</strong><br>${time}<br><br>\n        <strong>Nguyên nhân:</strong><br>${cause}<br><br>\n        <strong>Ngày áp dụng:</strong> ${escapeHtml(s.startDate)}\n      </div>\n    </li>\n`;\n  });\n\n  // ------------------ FOOTER ------------------\n  body += `\n  </ul>\n\n  <hr style=\"border:none; border-top:1px solid #eee; margin:20px 0;\" />\n\n  <p style=\"font-size:13px; color:#777;\">\n    🔎 <strong>Lưu ý:</strong> Đây không phải thông báo chính thức từ Điện lực.\n    Dữ liệu được thu thập tự động từ hệ thống công khai của EVN.\n  </p>\n\n  <p style=\"margin-top:20px;\">\n    Trân trọng,<br>\n    <strong>Hệ thống Crawler Thông báo Cúp điện được phát triển miễn phí bởi Kiêm Nhựt Triều</strong>\n  </p>\n\n</div>\n`;\n\n  // ------------------ Push Output ------------------\n  output.push({\n    json: {\n      ...entry,\n      email_subject: subject,\n      email_body: body,\n      email_to: user.email,\n      name: user.name,\n    }\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        624
+      ],
+      "id": "627ee2ab-ed2a-4ba5-86ff-6c625f6661e1",
+      "name": "Compose_Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.user.email }}",
+        "subject": "={{ $json.email_subject }}",
+        "message": "={{ $json.email_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        288,
+        352
+      ],
+      "id": "49b9bdb3-f8d1-4920-aa23-04eadc34b145",
+      "name": "Send a message",
+      "webhookId": "dc2f53f2-5d69-4590-98bb-5ce08d5b01e0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IvkjStdTPPfVxh5s",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 923790101,
+          "mode": "list",
+          "cachedResultName": "sent_history",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=923790101"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        496
+      ],
+      "id": "b1944604-babb-4766-b5bc-b0f596499cd3",
+      "name": "Get_Sent_History",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RcrZcrGMXIGC1JeG",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "/**\n * Node: Filter_New_And_Update_History\n *\n * Input 0 → từ Compose Email (list user + lịch mới)\n * Input 1 → từ Get Sent History (rows trong Google Sheet)\n *\n * Output:\n *  - items[0] → list user còn lịch mới để gửi email\n *  - items[1] → list rows để append vào Google Sheet\n */\n\nconst composeList = $items(\"Compose_Email\").map(i => i.json);\nconst historyRows = $items(\"Get_Sent_History\").map(i => i.json);\n\nconst resultsForEmail = [];\nconst rowsToAppend = [];\n\n// Helper: tìm xem lịch đã tồn tại trong sheet chưa\nfunction isSentBefore(userId, hash) {\n  return historyRows.some(\n    row =>\n      String(row.user_id).trim() === String(userId).trim() &&\n      String(row.hash).trim() === String(hash).trim()\n  );\n}\n\nfor (const entry of composeList) {\n  const user = entry.user;\n  const lichList = entry.lich_cup || [];\n\n  const keptSchedules = [];\n\n  for (const sch of lichList) {\n    const hash = sch.hash;\n    const userId = user.id;\n\n    if (isSentBefore(userId, hash)) {\n      // lịch đã gửi trước đây → skip\n      continue;\n    }\n\n    // Đây là lịch mới → giữ lại\n    keptSchedules.push(sch);\n\n    // Chuẩn bị append vào Google Sheet\n    rowsToAppend.push({\n      user_id: user.id,\n      area_code: user.area_code,\n      khu_vuc: sch.khu_vuc ?? (sch.where?.[0] || \"\"),\n      thoi_gian_cup: sch.thoi_gian_cup ?? (sch.time_raw?.[0] || \"\"),\n      hash,\n      sent_at: new Date().toISOString()\n    });\n  }\n\n  // Nếu user có lịch mới thì push vào output gửi mail\n  if (keptSchedules.length > 0) {\n    resultsForEmail.push({\n      ...entry,\n      lich_cup: keptSchedules,\n\n      // Update subject/body cho đúng số lịch mới nếu bạn muốn\n      email_subject: `[Thông báo lịch cúp điện] Khu vực ${user.area_code} – Có ${keptSchedules.length} lịch`,\n      email_body: entry.email_body, // nếu muốn render body theo lich mới, báo mình để mình sửa luôn\n    });\n  }\n}\n\nreturn [\n  { json: { send_list: resultsForEmail } },   // Output 1 → Gmail\n  { json: { append_rows: rowsToAppend } }     // Output 2 → Google Sheet Append\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        176
+      ],
+      "id": "e76faf09-4840-49bf-8850-cc910f7887bc",
+      "name": "Filter_New_And_Update_History",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ",
+          "mode": "list",
+          "cachedResultName": "evn-outage-notifier",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 923790101,
+          "mode": "list",
+          "cachedResultName": "sent_history",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZPu_KD37Fet6goOGKzqz_Du8GaiSxs79An5deqShCQ/edit#gid=923790101"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_id": "={{ $json.user_id }}",
+            "area_code": "={{ $json.area_code }}",
+            "khu_vuc": "={{ $json.khu_vuc }}",
+            "thoi_gian_cup": "={{ $json.thoi_gian_cup }}",
+            "hash": "={{ $json.hash }}",
+            "sent_at": "={{ $json.sent_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "area_code",
+              "displayName": "area_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "khu_vuc",
+              "displayName": "khu_vuc",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thoi_gian_cup",
+              "displayName": "thoi_gian_cup",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "hash",
+              "displayName": "hash",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sent_at",
+              "displayName": "sent_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        288,
+        0
+      ],
+      "id": "b3f3f75a-908a-4375-9c80-35b043eea26a",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RcrZcrGMXIGC1JeG",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "append_rows",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6bea1119-5b45-420c-a295-6e52d6978017",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "send_list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        32,
+        352
+      ],
+      "id": "f3c4ccbf-567e-40a6-9da1-836a2f46261e",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/crawl-electricity",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3008,
+        784
+      ],
+      "id": "3b778154-a129-4917-bee6-cd82bffb0669",
+      "name": "Webhook",
+      "webhookId": "cbfd35b5-dcfc-42a2-bdd0-e5d54d0196e8",
+      "notesInFlow": false,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JtRaWiCsNxSwZvIZ",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\nconst aiInput = {\n  users: items.map((item, userIdx) => ({\n    user_index: userIdx,\n    keyword: item.user.keyword || \"\",\n    schedules: item.lich_cup.map((s, idx) => ({\n      id: idx,\n      text: s.where?.[0] || \"\"\n    }))\n  }))\n};\n\n\nconst prompt = `\nBạn là mô hình phân loại khu vực Việt Nam. \nHãy đối chiếu keyword từng user với từng lịch. \nNotes:\n- keyword của user có thể được phân cách bởi dấu ';'. \n- Ví dụ user có 1 keyword là 'ấp Kos Thum', có nhiều keyword là 'ấp Kos Thum;xã Ninh Thạnh Lợi'\n- Phần Khu Vực cúp cũng phân cách nhau bởi dấu ';'. Cách đối chiếu nên tuân theo ấp và xã. Ví dụ keyword là 'ấp Kos Thum' mà Khu Vực cúp là 'Ấp Kos Thum - xã Ninh Thạnh Lợi' - nghĩa là user có lịch cúp. Một ví dụ khác là: nếu user có keyword là 'ấp Kos Thum;xã Ninh Thạnh Lợi', khu vực cúp là 'Xã Thống Nhất, Ninh Thạnh Lợi' - user cũng có lịch cúp.\n\nDỮ LIỆU:\n${JSON.stringify(aiInput, null, 2)}\n\n\nTRẢ VỀ DUY NHẤT JSON (không giải thích):\n{\n  \"results\": [\n     {\"user_index\": 0, \"match_ids\": [0,1]},\n     {\"user_index\": 1, \"match_ids\": []}\n  ]\n}\n`;\n\nreturn {\n  json: {\n    model: \"gpt-4o-mini\",\n    messages: [\n      { role: \"system\", content: \"Bạn là mô hình phân loại lịch cúp điện.\" },\n      { role: \"user\", content: prompt }\n    ],\n    temperature: 0\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -496,
+        880
+      ],
+      "id": "7a52b66b-4ecf-4317-94ff-dd9c268d4904",
+      "name": "Prepare_For_AI"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ========================\n// 1) Lấy text JSON AI trả về\n// ========================\nlet aiText;\n\ntry {\n  aiText = $json.output[0].content[0].text; \n} catch (e) {\n  throw new Error(\"❌ Không tìm thấy text trong output GPT node:\\n\" + JSON.stringify($json, null, 2));\n}\n\nconsole.log(\"AI RAW:\", aiText);\n\n// ========================\n// 2) Parse JSON\n// ========================\nlet parsed;\ntry {\n  parsed = JSON.parse(aiText);\n} catch (err) {\n  throw new Error(\"❌ AI trả về JSON không hợp lệ:\\n\" + aiText);\n}\n\nif (!parsed.results) {\n  throw new Error(\"❌ Không tìm thấy 'results' trong JSON AI:\\n\" + aiText);\n}\n\n// Map user_index → match_ids\nconst resultMap = {};\nparsed.results.forEach(r => {\n  resultMap[r.user_index] = r.match_ids || [];\n});\n\n// ========================\n// 3) Lấy dữ liệu gốc từ node trước GPT\n// ========================\nconst items = $items(\"Get_User_For_Mail\");\nconsole.log(\"Items:\", items);\n\n// ========================\n// 4) Build final output\n// ========================\nconst finalOutput = items.map((item, idx) => {\n  const matchIds = resultMap[idx] || [];\n  const matchedSchedules = item.json.lich_cup.filter((_, sIdx) => matchIds.includes(sIdx));\n\n  return {\n    json: {\n      user: item.json.user,\n      lich_cup: matchedSchedules\n    }\n  };\n});\n\nreturn finalOutput;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        880
+      ],
+      "id": "1edef88f-b74b-4ee5-aaee-970d9ffe71b8",
+      "name": "Parse_AI_Result"
+    },
+    {
+      "parameters": {
+        "url": "https://cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamCungCapDien",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "madvi",
+              "value": "={{ $('Re-mapping').item.json.area_code }}"
+            },
+            {
+              "name": "tuNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "denNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').plus({days: 3}).toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "ChucNang",
+              "value": "MaDonVi"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1696,
+        944
+      ],
+      "id": "7bb80fc1-f6f8-447e-a25b-053627e5a023",
+      "name": "Crawler",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "={{ $json.messages[0].role }}",
+              "content": "={{ $json.messages[0].content }}"
+            },
+            {
+              "role": "={{ $json.messages[1].role }}",
+              "content": "={{ $json.messages[1].content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        1088
+      ],
+      "id": "5d43a700-2482-4bcc-a2d0-a11ffdf92ec1",
+      "name": "AI Process",
+      "credentials": {
+        "openAiApi": {
+          "id": "bj8d1gcHs1tcHyCK",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Get_User_For_Mail": [
+      {
+        "json": {
+          "user": {
+            "row_number": 2,
+            "id": "U001",
+            "name": "Thị Mỹ Hương",
+            "company_code": "PB14",
+            "area_code": "PB1904",
+            "keyword": "Ấp Huê 1",
+            "channel": "email",
+            "email": "trieu1810@gmail.com",
+            "phone_number": "0815889924",
+            "active": true
+          },
+          "lich_cup": [
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 12:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 12:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 14:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 14:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Thạnh, Bình Thạnh A, Bình Hổ, Bình Hổ A - xã Vĩnh Phước; Ấp 1B,\n3, 12 - xã Phong Hiệp"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap binh thanh, binh thanh a, binh ho, binh ho a - xa vinh phuoc; ap 1b,\n3, 12 - xa phong hiep|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Huê 1, Huê 2, Huê 2B, Tường 3B, Tường 3A, Bình Thiện - xã Vĩnh\nThanh."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 10:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap hue 1, hue 2, hue 2b, tuong 3b, tuong 3a, binh thien - xa vinh\nthanh.|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 10:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp 10, Tường Thắng A, Tường Thắng B - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap 10, tuong thang a, tuong thang b - xa vinh thanh|thoi gian: tu 09:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Hành Chính, Long Hậu, Phước Hòa Tiền, Phước Thuận A, Phước\nHòa A - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 30/11/2025 đến 10:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, hanh chinh, long hau, phuoc hoa tien, phuoc thuan a, phuoc\nhoa a - xa phuoc long|thoi gian: tu 06:30:00 ngay 30/11/2025 đen 10:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Long Hải, Long Hậu, Hành Chính, Phước Thuận A, Phước Hòa A\n- xã Phước Long; Ấp Thọ Hậu - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 30/11/2025 đến 13:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, long hai, long hau, hanh chinh, phuoc thuan a, phuoc hoa a\n- xa phuoc long; ap tho hau - xa vinh phuoc|thoi gian: tu 09:30:00 ngay 30/11/2025 đen 13:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 02/12/2025 đến 13:30:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 07:00:00 ngay 02/12/2025 đen 13:30:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:30:00 ngày 02/12/2025 đến 16:00:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 12:30:00 ngay 02/12/2025 đen 16:00:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Tường Tư, Mỹ Phú Đông, Mỹ Phú Tây - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 03/12/2025 đến 11:00:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap tuong tu, my phu đong, my phu tay - xa vinh thanh|thoi gian: tu 07:00:00 ngay 03/12/2025 đen 11:00:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Mỹ Tường 1, Mỹ Trinh, Mỹ Hòa - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:00:00 ngày 03/12/2025 đến 16:30:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap my tuong 1, my trinh, my hoa - xa vinh thanh|thoi gian: tu 12:00:00 ngay 03/12/2025 đen 16:30:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Phước Hòa Tiền - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:30:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap phuoc hoa tien - xa phuoc long|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:30:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Lễ, Bình Tốt, Bình Tốt A, Bình Tốt B, Bình Bảo, Phước 2 - xã\nVĩnh Phước; Ấp Huê 1, Huê 2, Huê 2A, Bình Thiện, Tường 3B - xã Vĩnh Thanh; Ấp\nLong Thành - xã Phước Long."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 12:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh le, binh tot, binh tot a, binh tot b, binh bao, phuoc 2 - xa\nvinh phuoc; ap hue 1, hue 2, hue 2a, binh thien, tuong 3b - xa vinh thanh; ap\nlong thanh - xa phuoc long.|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 12:00:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Bảo, Bình Tốt, Bình Tốt B - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh bao, binh tot, binh tot b - xa vinh phuoc|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:00:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 12:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 12:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 14:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 14:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Thạnh, Bình Thạnh A, Bình Hổ, Bình Hổ A - xã Vĩnh Phước; Ấp 1B,\n3, 12 - xã Phong Hiệp"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap binh thanh, binh thanh a, binh ho, binh ho a - xa vinh phuoc; ap 1b,\n3, 12 - xa phong hiep|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Huê 1, Huê 2, Huê 2B, Tường 3B, Tường 3A, Bình Thiện - xã Vĩnh\nThanh."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 10:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap hue 1, hue 2, hue 2b, tuong 3b, tuong 3a, binh thien - xa vinh\nthanh.|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 10:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp 10, Tường Thắng A, Tường Thắng B - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap 10, tuong thang a, tuong thang b - xa vinh thanh|thoi gian: tu 09:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Hành Chính, Long Hậu, Phước Hòa Tiền, Phước Thuận A, Phước\nHòa A - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 30/11/2025 đến 10:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, hanh chinh, long hau, phuoc hoa tien, phuoc thuan a, phuoc\nhoa a - xa phuoc long|thoi gian: tu 06:30:00 ngay 30/11/2025 đen 10:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Long Hải, Long Hậu, Hành Chính, Phước Thuận A, Phước Hòa A\n- xã Phước Long; Ấp Thọ Hậu - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 30/11/2025 đến 13:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, long hai, long hau, hanh chinh, phuoc thuan a, phuoc hoa a\n- xa phuoc long; ap tho hau - xa vinh phuoc|thoi gian: tu 09:30:00 ngay 30/11/2025 đen 13:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 02/12/2025 đến 13:30:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 07:00:00 ngay 02/12/2025 đen 13:30:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:30:00 ngày 02/12/2025 đến 16:00:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 12:30:00 ngay 02/12/2025 đen 16:00:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Tường Tư, Mỹ Phú Đông, Mỹ Phú Tây - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 03/12/2025 đến 11:00:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap tuong tu, my phu đong, my phu tay - xa vinh thanh|thoi gian: tu 07:00:00 ngay 03/12/2025 đen 11:00:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Mỹ Tường 1, Mỹ Trinh, Mỹ Hòa - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:00:00 ngày 03/12/2025 đến 16:30:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap my tuong 1, my trinh, my hoa - xa vinh thanh|thoi gian: tu 12:00:00 ngay 03/12/2025 đen 16:30:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Phước Hòa Tiền - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:30:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap phuoc hoa tien - xa phuoc long|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:30:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Lễ, Bình Tốt, Bình Tốt A, Bình Tốt B, Bình Bảo, Phước 2 - xã\nVĩnh Phước; Ấp Huê 1, Huê 2, Huê 2A, Bình Thiện, Tường 3B - xã Vĩnh Thanh; Ấp\nLong Thành - xã Phước Long."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 12:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh le, binh tot, binh tot a, binh tot b, binh bao, phuoc 2 - xa\nvinh phuoc; ap hue 1, hue 2, hue 2a, binh thien, tuong 3b - xa vinh thanh; ap\nlong thanh - xa phuoc long.|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 12:00:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Bảo, Bình Tốt, Bình Tốt B - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh bao, binh tot, binh tot b - xa vinh phuoc|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:00:00 ngay 04/12/2025"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "user": {
+            "row_number": 3,
+            "id": "U002",
+            "name": "Kiêm Nhựt Triêu",
+            "company_code": "PB14",
+            "area_code": "PB1905",
+            "keyword": "Ấp Kos Thum",
+            "channel": "email",
+            "email": "trieu1810@gmail.com",
+            "phone_number": "0358974020",
+            "active": true
+          },
+          "lich_cup": [
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Kinh Xáng, Trèm Trẹm, Xẻo Quao, xã Hồng Dân; Âp Vĩnh Bình, Sơn\nTrắng, Vĩnh Thành Lập, Nhụy Cầm, Vĩnh Hòa, xã Vĩnh Lộc, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 27/11/2025 đến 14:30:00 ngày 27/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "27/11/2025",
+              "startDateObj": "2025-11-26T17:00:00.000Z",
+              "hash": "khu vuc: ap kinh xang, trem trem, xeo quao, xa hong dan; ap vinh binh, son\ntrang, vinh thanh lap, nhuy cam, vinh hoa, xa vinh loc, tinh ca mau|thoi gian: tu 07:00:00 ngay 27/11/2025 đen 14:30:00 ngay 27/11/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Đầu Sấu Đông, Đầu Sấu Tây, Tà Suôl, Bà Ai I, Bà Ai II, Cai Giảng,\nBình Dân, Phước Hòa, xã Hồng Dân; Ấp Vĩnh Thành Lập, xã Vĩnh Lộc, tỉnh Cà Mau."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:00:00 ngày 28/11/2025 đến 14:00:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap đau sau đong, đau sau tay, ta suol, ba ai i, ba ai ii, cai giang,\nbinh dan, phuoc hoa, xa hong dan; ap vinh thanh lap, xa vinh loc, tinh ca mau.|thoi gian: tu 06:00:00 ngay 28/11/2025 đen 14:00:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Ninh Thành, Ninh Bình, Xóm Tre, Ninh Điền, Phú Tân, Ngan Kè, Ninh\nPhú, Vàm, xã Ninh Quới, tỉnh Cà Mau."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:00:00 ngày 29/11/2025 đến 16:00:00 ngày 29/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Đầu tư xây dựng Trung, hạ áp"
+              ],
+              "startDate": "29/11/2025",
+              "startDateObj": "2025-11-28T17:00:00.000Z",
+              "hash": "khu vuc: ap ninh thanh, ninh binh, xom tre, ninh đien, phu tan, ngan ke, ninh\nphu, vam, xa ninh quoi, tinh ca mau.|thoi gian: tu 06:00:00 ngay 29/11/2025 đen 16:00:00 ngay 29/11/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Thống Nhất, Trèm Trẹm, Xẻo Quao, Bà Gồng, Nội Ô, xã Hồng Dân; Ấp\nNinh Phước, Tà Óc, xã Hồng Dân, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:00:00 ngày 30/11/2025 đến 16:00:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Đầu tư xây dựng Trung, hạ áp"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap thong nhat, trem trem, xeo quao, ba gong, noi o, xa hong dan; ap\nninh phuoc, ta oc, xa hong dan, tinh ca mau|thoi gian: tu 06:00:00 ngay 30/11/2025 đen 16:00:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Ninh Thạnh II, Tà Óc, xã Hồng Dân, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:00:00 ngày 01/12/2025 đến 16:30:00 ngày 01/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Đầu tư xây dựng Trung, hạ áp"
+              ],
+              "startDate": "01/12/2025",
+              "startDateObj": "2025-11-30T17:00:00.000Z",
+              "hash": "khu vuc: ap ninh thanh ii, ta oc, xa hong dan, tinh ca mau|thoi gian: tu 06:00:00 ngay 01/12/2025 đen 16:30:00 ngay 01/12/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Tà Suôl, xã Lộc Ninh, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:30:00 ngày 03/12/2025 đến 09:15:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap ta suol, xa loc ninh, tinh ca mau|thoi gian: tu 07:30:00 ngay 03/12/2025 đen 09:15:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Kinh Xáng, xã Hồng Dân, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:30:00 ngày 04/12/2025 đến 09:15:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap kinh xang, xa hong dan, tinh ca mau|thoi gian: tu 07:30:00 ngay 04/12/2025 đen 09:15:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Bà Ai II, xã Hồng Dân, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 04/12/2025 đến 11:15:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap ba ai ii, xa hong dan, tinh ca mau|thoi gian: tu 09:30:00 ngay 04/12/2025 đen 11:15:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Xẻo Gừa, xã Ninh Thạnh Lợi, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 11:45:00 ngày 04/12/2025 đến 13:30:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap xeo gua, xa ninh thanh loi, tinh ca mau|thoi gian: tu 11:45:00 ngay 04/12/2025 đen 13:30:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1905",
+              "where": [
+                "KHU VỰC: Ấp Ninh Thạnh - xã Ninh Quới, tỉnh Cà Mau"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 10:45:00 ngày 03/12/2025 đến 12:30:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap ninh thanh - xa ninh quoi, tinh ca mau|thoi gian: tu 10:45:00 ngay 03/12/2025 đen 12:30:00 ngay 03/12/2025"
+            }
+          ]
+        }
+      },
+      {
+        "json": {
+          "user": {
+            "row_number": 4,
+            "id": "U003",
+            "name": "Kiêm Minh Nhật",
+            "company_code": "PB14",
+            "area_code": "PB1904",
+            "keyword": "Ấp Bình Tốt",
+            "channel": "email",
+            "email": "trieu1810@gmail.com",
+            "phone_number": "0358974021",
+            "active": true
+          },
+          "lich_cup": [
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 12:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 12:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 14:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 14:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Thạnh, Bình Thạnh A, Bình Hổ, Bình Hổ A - xã Vĩnh Phước; Ấp 1B,\n3, 12 - xã Phong Hiệp"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap binh thanh, binh thanh a, binh ho, binh ho a - xa vinh phuoc; ap 1b,\n3, 12 - xa phong hiep|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Huê 1, Huê 2, Huê 2B, Tường 3B, Tường 3A, Bình Thiện - xã Vĩnh\nThanh."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 10:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap hue 1, hue 2, hue 2b, tuong 3b, tuong 3a, binh thien - xa vinh\nthanh.|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 10:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp 10, Tường Thắng A, Tường Thắng B - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap 10, tuong thang a, tuong thang b - xa vinh thanh|thoi gian: tu 09:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Hành Chính, Long Hậu, Phước Hòa Tiền, Phước Thuận A, Phước\nHòa A - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 30/11/2025 đến 10:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, hanh chinh, long hau, phuoc hoa tien, phuoc thuan a, phuoc\nhoa a - xa phuoc long|thoi gian: tu 06:30:00 ngay 30/11/2025 đen 10:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Long Hải, Long Hậu, Hành Chính, Phước Thuận A, Phước Hòa A\n- xã Phước Long; Ấp Thọ Hậu - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 30/11/2025 đến 13:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, long hai, long hau, hanh chinh, phuoc thuan a, phuoc hoa a\n- xa phuoc long; ap tho hau - xa vinh phuoc|thoi gian: tu 09:30:00 ngay 30/11/2025 đen 13:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 02/12/2025 đến 13:30:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 07:00:00 ngay 02/12/2025 đen 13:30:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:30:00 ngày 02/12/2025 đến 16:00:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 12:30:00 ngay 02/12/2025 đen 16:00:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Tường Tư, Mỹ Phú Đông, Mỹ Phú Tây - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 03/12/2025 đến 11:00:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap tuong tu, my phu đong, my phu tay - xa vinh thanh|thoi gian: tu 07:00:00 ngay 03/12/2025 đen 11:00:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Mỹ Tường 1, Mỹ Trinh, Mỹ Hòa - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:00:00 ngày 03/12/2025 đến 16:30:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap my tuong 1, my trinh, my hoa - xa vinh thanh|thoi gian: tu 12:00:00 ngay 03/12/2025 đen 16:30:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Phước Hòa Tiền - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:30:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap phuoc hoa tien - xa phuoc long|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:30:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Lễ, Bình Tốt, Bình Tốt A, Bình Tốt B, Bình Bảo, Phước 2 - xã\nVĩnh Phước; Ấp Huê 1, Huê 2, Huê 2A, Bình Thiện, Tường 3B - xã Vĩnh Thanh; Ấp\nLong Thành - xã Phước Long."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 12:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh le, binh tot, binh tot a, binh tot b, binh bao, phuoc 2 - xa\nvinh phuoc; ap hue 1, hue 2, hue 2a, binh thien, tuong 3b - xa vinh thanh; ap\nlong thanh - xa phuoc long.|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 12:00:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Bảo, Bình Tốt, Bình Tốt B - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh bao, binh tot, binh tot b - xa vinh phuoc|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:00:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 12:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 12:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long; Ấp Phước 2, Bình Tốt, Bình Tốt A, Bình\nTốt B, Bình Hổ, Huê 1, Bình Thạnh, Bình Thạnh A - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 26/11/2025 đến 14:00:00 ngày 26/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "26/11/2025",
+              "startDateObj": "2025-11-25T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long; ap phuoc 2, binh tot, binh tot a, binh\ntot b, binh ho, hue 1, binh thanh, binh thanh a - xa vinh phuoc|thoi gian: tu 06:30:00 ngay 26/11/2025 đen 14:00:00 ngay 26/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Thạnh, Bình Thạnh A, Bình Hổ, Bình Hổ A - xã Vĩnh Phước; Ấp 1B,\n3, 12 - xã Phong Hiệp"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap binh thanh, binh thanh a, binh ho, binh ho a - xa vinh phuoc; ap 1b,\n3, 12 - xa phong hiep|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Huê 1, Huê 2, Huê 2B, Tường 3B, Tường 3A, Bình Thiện - xã Vĩnh\nThanh."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 28/11/2025 đến 10:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap hue 1, hue 2, hue 2b, tuong 3b, tuong 3a, binh thien - xa vinh\nthanh.|thoi gian: tu 06:30:00 ngay 28/11/2025 đen 10:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp 10, Tường Thắng A, Tường Thắng B - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 28/11/2025 đến 13:30:00 ngày 28/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "28/11/2025",
+              "startDateObj": "2025-11-27T17:00:00.000Z",
+              "hash": "khu vuc: ap 10, tuong thang a, tuong thang b - xa vinh thanh|thoi gian: tu 09:30:00 ngay 28/11/2025 đen 13:30:00 ngay 28/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Hành Chính, Long Hậu, Phước Hòa Tiền, Phước Thuận A, Phước\nHòa A - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 06:30:00 ngày 30/11/2025 đến 10:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Bảo trì, sửa chữa lưới điện"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, hanh chinh, long hau, phuoc hoa tien, phuoc thuan a, phuoc\nhoa a - xa phuoc long|thoi gian: tu 06:30:00 ngay 30/11/2025 đen 10:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Hòa, Long Hải, Long Hậu, Hành Chính, Phước Thuận A, Phước Hòa A\n- xã Phước Long; Ấp Thọ Hậu - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 09:30:00 ngày 30/11/2025 đến 13:30:00 ngày 30/11/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "30/11/2025",
+              "startDateObj": "2025-11-29T17:00:00.000Z",
+              "hash": "khu vuc: ap long hoa, long hai, long hau, hanh chinh, phuoc thuan a, phuoc hoa a\n- xa phuoc long; ap tho hau - xa vinh phuoc|thoi gian: tu 09:30:00 ngay 30/11/2025 đen 13:30:00 ngay 30/11/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 02/12/2025 đến 13:30:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 07:00:00 ngay 02/12/2025 đen 13:30:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Long Thành - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:30:00 ngày 02/12/2025 đến 16:00:00 ngày 02/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "02/12/2025",
+              "startDateObj": "2025-12-01T17:00:00.000Z",
+              "hash": "khu vuc: ap long thanh - xa phuoc long|thoi gian: tu 12:30:00 ngay 02/12/2025 đen 16:00:00 ngay 02/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Tường Tư, Mỹ Phú Đông, Mỹ Phú Tây - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 03/12/2025 đến 11:00:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap tuong tu, my phu đong, my phu tay - xa vinh thanh|thoi gian: tu 07:00:00 ngay 03/12/2025 đen 11:00:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Mỹ Tường 1, Mỹ Trinh, Mỹ Hòa - xã Vĩnh Thanh"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 12:00:00 ngày 03/12/2025 đến 16:30:00 ngày 03/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "03/12/2025",
+              "startDateObj": "2025-12-02T17:00:00.000Z",
+              "hash": "khu vuc: ap my tuong 1, my trinh, my hoa - xa vinh thanh|thoi gian: tu 12:00:00 ngay 03/12/2025 đen 16:30:00 ngay 03/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Phước Hòa Tiền - xã Phước Long"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:30:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap phuoc hoa tien - xa phuoc long|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:30:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Lễ, Bình Tốt, Bình Tốt A, Bình Tốt B, Bình Bảo, Phước 2 - xã\nVĩnh Phước; Ấp Huê 1, Huê 2, Huê 2A, Bình Thiện, Tường 3B - xã Vĩnh Thanh; Ấp\nLong Thành - xã Phước Long."
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 12:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh le, binh tot, binh tot a, binh tot b, binh bao, phuoc 2 - xa\nvinh phuoc; ap hue 1, hue 2, hue 2a, binh thien, tuong 3b - xa vinh thanh; ap\nlong thanh - xa phuoc long.|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 12:00:00 ngay 04/12/2025"
+            },
+            {
+              "area_code": "PB1904",
+              "where": [
+                "KHU VỰC: Ấp Bình Bảo, Bình Tốt, Bình Tốt B - xã Vĩnh Phước"
+              ],
+              "time_raw": [
+                "THỜI GIAN: Từ 07:00:00 ngày 04/12/2025 đến 14:00:00 ngày 04/12/2025"
+              ],
+              "cause": [
+                "LÝ DO NGỪNG CUNG CẤP ĐIỆN: Thí nghiệm, sửa chữa bảo dưỡng Trung, hạ áp"
+              ],
+              "startDate": "04/12/2025",
+              "startDateObj": "2025-12-03T17:00:00.000Z",
+              "hash": "khu vuc: ap binh bao, binh tot, binh tot b - xa vinh phuoc|thoi gian: tu 07:00:00 ngay 04/12/2025 đen 14:00:00 ngay 04/12/2025"
+            }
+          ]
+        }
+      }
+    ],
+    "AI Process": [
+      {
+        "json": {
+          "output": [
+            {
+              "id": "msg_0740e3441c99f5bb006927207d6a9c819b81b813efc95c4b0d",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\n  \"results\": [\n    {\"user_index\": 0, \"match_ids\": [3, 12, 17, 26]},\n    {\"user_index\": 1, \"match_ids\": []},\n    {\"user_index\": 2, \"match_ids\": [0, 1, 12, 14, 15, 26]}\n  ]\n}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Get Active Users": {
+      "main": [
+        [
+          {
+            "node": "Merge Active User and Area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Area": {
+      "main": [
+        [
+          {
+            "node": "Merge Active User and Area",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Active User and Area": {
+      "main": [
+        [
+          {
+            "node": "Group By area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Group By area": {
+      "main": [
+        [
+          {
+            "node": "Re-mapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Re-mapping": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Crawler",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTML1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code: Guard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Guard": {
+      "main": [
+        [
+          {
+            "node": "Get_User_For_Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_User_For_Mail": {
+      "main": [
+        [
+          {
+            "node": "Prepare_For_AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compose_Email": {
+      "main": [
+        [
+          {
+            "node": "Get_Sent_History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Sent_History": {
+      "main": [
+        [
+          {
+            "node": "Filter_New_And_Update_History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter_New_And_Update_History": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Active Users",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Area",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare_For_AI": {
+      "main": [
+        [
+          {
+            "node": "AI Process",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse_AI_Result": {
+      "main": [
+        [
+          {
+            "node": "Compose_Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crawler": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Process": {
+      "main": [
+        [
+          {
+            "node": "Parse_AI_Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Jakarta",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "cd7db5bd-591d-4898-ad54-e8df66fc531b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c032ea0a5bf108863f2ed5a1e769a0889e7dcb3ee1b1ae1be52bd4ad18754b9d"
+  },
+  "id": "OVaqiMfMeWJqLAvz",
+  "tags": []
+}
