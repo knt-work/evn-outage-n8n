@@ -30,8 +30,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -2768,
-        320
+        -2784,
+        0
       ],
       "id": "dbeb7591-19d0-43b2-937e-51e64f5a6914",
       "name": "Get Active Users",
@@ -64,7 +64,7 @@
       "typeVersion": 4.7,
       "position": [
         -2784,
-        1264
+        192
       ],
       "id": "02106908-f9dc-4855-b4e8-efe8e001ef3c",
       "name": "Get Area",
@@ -92,8 +92,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -2512,
-        768
+        -2560,
+        96
       ],
       "id": "0ffbdf84-b125-4d23-a1d4-c51ed0a754aa",
       "name": "Merge Active User and Area"
@@ -105,8 +105,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2080,
-        768
+        -2112,
+        96
       ],
       "id": "ff3fcfe2-eda7-4f25-bfee-a58416e736e2",
       "name": "Re-mapping",
@@ -126,8 +126,8 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -2304,
-        768
+        -2336,
+        96
       ],
       "id": "60914d66-9324-4345-bf7c-e8930167c949",
       "name": "Group By area"
@@ -141,8 +141,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1808,
-        624
+        -1888,
+        96
       ],
       "id": "f54fbf3d-cb23-44a4-afe4-96d370e35359",
       "name": "Loop Over Items",
@@ -166,8 +166,8 @@
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        -1568,
-        1232
+        -1504,
+        400
       ],
       "id": "4a52ea85-cb5e-4494-b409-0db04d84ac49",
       "name": "HTML",
@@ -187,8 +187,8 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -1408,
-        1344
+        -1312,
+        400
       ],
       "id": "9397d13c-7a01-4979-a10a-747e225dcb7a",
       "name": "Aggregate"
@@ -221,8 +221,8 @@
       "type": "n8n-nodes-base.html",
       "typeVersion": 1.2,
       "position": [
-        -1248,
-        1344
+        -1120,
+        400
       ],
       "id": "f64cce37-7034-4811-a8a2-12614a20571b",
       "name": "HTML1",
@@ -237,8 +237,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -1088,
-        880
+        -896,
+        128
       ],
       "id": "a602ab62-a703-4356-b1d2-25f707697bf3",
       "name": "Merge",
@@ -251,8 +251,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -912,
-        880
+        -720,
+        128
       ],
       "id": "f125ce18-1615-45ee-a16a-0ef5bec87f2a",
       "name": "Code: Guard"
@@ -264,8 +264,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -720,
-        880
+        -512,
+        128
       ],
       "id": "03aa2195-60d0-467c-b530-223fb5c86463",
       "name": "Get_User_For_Mail",
@@ -278,8 +278,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        176,
-        624
+        416,
+        128
       ],
       "id": "627ee2ab-ed2a-4ba5-86ff-6c625f6661e1",
       "name": "Compose_Email"
@@ -294,8 +294,8 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        288,
-        352
+        1264,
+        208
       ],
       "id": "49b9bdb3-f8d1-4920-aa23-04eadc34b145",
       "name": "Send a message",
@@ -328,8 +328,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -368,
-        496
+        624,
+        128
       ],
       "id": "b1944604-babb-4766-b5bc-b0f596499cd3",
       "name": "Get_Sent_History",
@@ -350,12 +350,179 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -208,
-        176
+        816,
+        128
       ],
       "id": "e76faf09-4840-49bf-8850-cc910f7887bc",
       "name": "Filter_New_And_Update_History",
       "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "append_rows",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1040,
+        0
+      ],
+      "id": "6bea1119-5b45-420c-a295-6e52d6978017",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "send_list",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        208
+      ],
+      "id": "f3c4ccbf-567e-40a6-9da1-836a2f46261e",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/crawl-electricity",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3008,
+        96
+      ],
+      "id": "3b778154-a129-4917-bee6-cd82bffb0669",
+      "name": "Webhook",
+      "webhookId": "cbfd35b5-dcfc-42a2-bdd0-e5d54d0196e8",
+      "notesInFlow": false,
+      "retryOnFail": false,
+      "executeOnce": false,
+      "alwaysOutputData": false,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JtRaWiCsNxSwZvIZ",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all().map(i => i.json);\n\nconst aiInput = {\n  users: items.map((item, userIdx) => ({\n    user_index: userIdx,\n    keyword: item.user.keyword || \"\",\n    schedules: item.lich_cup.map((s, idx) => ({\n      id: idx,\n      text: s.where?.[0] || \"\"\n    }))\n  }))\n};\n\n\nconst prompt = `\nBạn là mô hình phân loại khu vực Việt Nam.\n\nNhiệm vụ:\nDựa trên danh sách user và danh sách lịch trong DỮ LIỆU, hãy xác định mỗi user có match với lịch nào.\n\n-------------------------------------\nQUY TẮC MATCH KHU VỰC (TUÂN THỦ CHẶT):\n-------------------------------------\n\n1. Keyword của user có thể chứa nhiều mục, phân tách bằng dấu \";\"\n   Ví dụ: \"ấp Kos Thum;xã Ninh Thạnh Lợi\"\n\n2. Mỗi lịch cúp điện có thể chứa nhiều khu vực, phân tách bằng dấu \";\"\n   Ví dụ: \"Ấp Xẻo Gừa;Xã Ninh Thạnh Lợi\"\n\n3. QUY TẮC PHÂN TÁCH:\n   - Dấu \";\" → phân tách thành CÁC KHU VỰC ĐỘC LẬP.\n   - Dấu \",\" hoặc \"-\" → chỉ là mô tả chi tiết của CÙNG MỘT khu vực, KHÔNG tách.\n   Ví dụ:\n     - \"Ấp Xẻo Gừa; Xã Ninh Thạnh Lợi\" → 2 khu vực độc lập.\n     - \"Ấp Xẻo Gừa, xã Ninh Thạnh Lợi, tỉnh Cà Mau\" → 1 khu vực duy nhất.\n\n4. QUY TẮC MATCH:\n   - Chuẩn hoá chuỗi: bỏ dấu, lowercase.\n   - So khớp keyword của user với các KHU VỰC ĐỘC LẬP trong lịch.\n   - User được xem là có lịch nếu:\n       a) keyword match đúng với ấp/phường/xã/huyện/tỉnh trong 1 khu vực độc lập.\n       b) Nếu lịch KHÔNG có dấu \";\" (nghĩa là chỉ mô tả 1 khu vực duy nhất):\n          → chỉ match theo ẤP, KHÔNG match theo xã/phường/huyện.\n          (Vì khu vực đó là 1 đơn vị duy nhất, không phải 2 đơn vị tách biệt.)\n\n5. ƯU TIÊN:\n   - Lịch có dấu \";\" → cho phép match theo xã/phường/ấp.\n   - Lịch dùng chỉ \",\" hoặc \"-\" → bắt buộc match đúng Ấp (không match theo xã).\n\n6. Ví dụ đúng:\n   User: \"ấp Kos Thum;xã Ninh Thạnh Lợi\"\n   Lịch: \"Ấp Xẻo Gừa; xã Ninh Thạnh Lợi\"\n   → Match (vì xã là khu vực độc lập).\n\n7. Ví dụ không match:\n   User: \"ấp Kos Thum;xã Ninh Thạnh Lợi\"\n   Lịch: \"Ấp Xẻo Gừa, xã Ninh Thạnh Lợi, tỉnh Cà Mau\"\n   → Không match (vì đây là 1 khu vực duy nhất, phải match đúng Ấp Xẻo Gừa).\n\n-------------------------------------\nDỮ LIỆU:\n${JSON.stringify(aiInput, null, 2)}\n-------------------------------------\n\nTrả về DUY NHẤT JSON, KHÔNG được dùng markdown, KHÔNG dùng json hoặc bất kỳ code block nào.\nChỉ trả về JSON thuần như ví dụ này:\n\n{\n  \"results\": [\n     {\"user_index\": 0, \"match_ids\": [0,1]},\n     {\"user_index\": 1, \"match_ids\": []}\n  ]\n}\n\n`;\n\nreturn {\n  json: {\n    model: \"gpt-4o-mini\",\n    messages: [\n      { role: \"system\", content: \"Bạn là mô hình phân loại lịch cúp điện.\" },\n      { role: \"user\", content: prompt }\n    ],\n    temperature: 0\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -304,
+        128
+      ],
+      "id": "7a52b66b-4ecf-4317-94ff-dd9c268d4904",
+      "name": "Prepare_For_AI"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ========================\n// 1) Lấy text JSON AI trả về\n// ========================\nlet aiText;\n\ntry {\n  aiText = $json.output[0].content[0].text; \n} catch (e) {\n  throw new Error(\"❌ Không tìm thấy text trong output GPT node:\\n\" + JSON.stringify($json, null, 2));\n}\n\nconsole.log(\"AI RAW:\", aiText);\n\n// ========================\n// 2) Parse JSON\n// ========================\nlet parsed;\ntry {\n  parsed = JSON.parse(aiText);\n} catch (err) {\n  throw new Error(\"❌ AI trả về JSON không hợp lệ:\\n\" + aiText);\n}\n\nif (!parsed.results) {\n  throw new Error(\"❌ Không tìm thấy 'results' trong JSON AI:\\n\" + aiText);\n}\n\n// Map user_index → match_ids\nconst resultMap = {};\nparsed.results.forEach(r => {\n  resultMap[r.user_index] = r.match_ids || [];\n});\n\n// ========================\n// 3) Lấy dữ liệu gốc từ node trước GPT\n// ========================\nconst items = $items(\"Get_User_For_Mail\");\nconsole.log(\"Items:\", items);\n\n// ========================\n// 4) Build final output\n// ========================\nconst finalOutput = items.map((item, idx) => {\n  const matchIds = resultMap[idx] || [];\n  const matchedSchedules = item.json.lich_cup.filter((_, sIdx) => matchIds.includes(sIdx));\n\n  return {\n    json: {\n      user: item.json.user,\n      lich_cup: matchedSchedules\n    }\n  };\n});\n\nreturn finalOutput;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        128
+      ],
+      "id": "1edef88f-b74b-4ee5-aaee-970d9ffe71b8",
+      "name": "Parse_AI_Result"
+    },
+    {
+      "parameters": {
+        "url": "https://cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamCungCapDien",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "madvi",
+              "value": "={{ $('Re-mapping').item.json.area_code }}"
+            },
+            {
+              "name": "tuNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "denNgay",
+              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').plus({days: 3}).toFormat('dd-LL-yyyy')}}"
+            },
+            {
+              "name": "ChucNang",
+              "value": "MaDonVi"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1664,
+        400
+      ],
+      "id": "7bb80fc1-f6f8-447e-a25b-053627e5a023",
+      "name": "Crawler",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "GPT-5"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "={{ $json.messages[0].role }}",
+              "content": "={{ $json.messages[0].content }}"
+            },
+            {
+              "role": "={{ $json.messages[1].role }}",
+              "content": "={{ $json.messages[1].content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        128
+      ],
+      "id": "5d43a700-2482-4bcc-a2d0-a11ffdf92ec1",
+      "name": "AI Process",
+      "credentials": {
+        "openAiApi": {
+          "id": "bj8d1gcHs1tcHyCK",
+          "name": "OpenAi account"
+        }
+      }
     },
     {
       "parameters": {
@@ -449,182 +616,15 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        288,
+        1264,
         0
       ],
       "id": "b3f3f75a-908a-4375-9c80-35b043eea26a",
-      "name": "Append row in sheet",
+      "name": "Append Mailing History",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "RcrZcrGMXIGC1JeG",
           "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "append_rows",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        0,
-        0
-      ],
-      "id": "6bea1119-5b45-420c-a295-6e52d6978017",
-      "name": "Split Out"
-    },
-    {
-      "parameters": {
-        "fieldToSplitOut": "send_list",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
-      "position": [
-        32,
-        352
-      ],
-      "id": "f3c4ccbf-567e-40a6-9da1-836a2f46261e",
-      "name": "Split Out1"
-    },
-    {
-      "parameters": {
-        "httpMethod": "POST",
-        "path": "/crawl-electricity",
-        "authentication": "headerAuth",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        -3008,
-        784
-      ],
-      "id": "3b778154-a129-4917-bee6-cd82bffb0669",
-      "name": "Webhook",
-      "webhookId": "cbfd35b5-dcfc-42a2-bdd0-e5d54d0196e8",
-      "notesInFlow": false,
-      "retryOnFail": false,
-      "executeOnce": false,
-      "alwaysOutputData": false,
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "JtRaWiCsNxSwZvIZ",
-          "name": "Header Auth account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const items = $input.all().map(i => i.json);\n\nconst aiInput = {\n  users: items.map((item, userIdx) => ({\n    user_index: userIdx,\n    keyword: item.user.keyword || \"\",\n    schedules: item.lich_cup.map((s, idx) => ({\n      id: idx,\n      text: s.where?.[0] || \"\"\n    }))\n  }))\n};\n\n\nconst prompt = `\nBạn là mô hình phân loại khu vực Việt Nam. \nHãy đối chiếu keyword từng user với từng lịch. \nNotes:\n- keyword của user có thể được phân cách bởi dấu ';'. \n- Ví dụ user có 1 keyword là 'ấp Kos Thum', có nhiều keyword là 'ấp Kos Thum;xã Ninh Thạnh Lợi'\n- Phần Khu Vực cúp cũng phân cách nhau bởi dấu ';'. Cách đối chiếu nên tuân theo ấp và xã. Ví dụ keyword là 'ấp Kos Thum' mà Khu Vực cúp là 'Ấp Kos Thum - xã Ninh Thạnh Lợi' - nghĩa là user có lịch cúp. Một ví dụ khác là: nếu user có keyword là 'ấp Kos Thum;xã Ninh Thạnh Lợi', khu vực cúp là 'Xã Thống Nhất, Ninh Thạnh Lợi' - user cũng có lịch cúp.\n\nDỮ LIỆU:\n${JSON.stringify(aiInput, null, 2)}\n\n\nTRẢ VỀ DUY NHẤT JSON (không giải thích):\n{\n  \"results\": [\n     {\"user_index\": 0, \"match_ids\": [0,1]},\n     {\"user_index\": 1, \"match_ids\": []}\n  ]\n}\n`;\n\nreturn {\n  json: {\n    model: \"gpt-4o-mini\",\n    messages: [\n      { role: \"system\", content: \"Bạn là mô hình phân loại lịch cúp điện.\" },\n      { role: \"user\", content: prompt }\n    ],\n    temperature: 0\n  }\n};\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -496,
-        880
-      ],
-      "id": "7a52b66b-4ecf-4317-94ff-dd9c268d4904",
-      "name": "Prepare_For_AI"
-    },
-    {
-      "parameters": {
-        "jsCode": "// ========================\n// 1) Lấy text JSON AI trả về\n// ========================\nlet aiText;\n\ntry {\n  aiText = $json.output[0].content[0].text; \n} catch (e) {\n  throw new Error(\"❌ Không tìm thấy text trong output GPT node:\\n\" + JSON.stringify($json, null, 2));\n}\n\nconsole.log(\"AI RAW:\", aiText);\n\n// ========================\n// 2) Parse JSON\n// ========================\nlet parsed;\ntry {\n  parsed = JSON.parse(aiText);\n} catch (err) {\n  throw new Error(\"❌ AI trả về JSON không hợp lệ:\\n\" + aiText);\n}\n\nif (!parsed.results) {\n  throw new Error(\"❌ Không tìm thấy 'results' trong JSON AI:\\n\" + aiText);\n}\n\n// Map user_index → match_ids\nconst resultMap = {};\nparsed.results.forEach(r => {\n  resultMap[r.user_index] = r.match_ids || [];\n});\n\n// ========================\n// 3) Lấy dữ liệu gốc từ node trước GPT\n// ========================\nconst items = $items(\"Get_User_For_Mail\");\nconsole.log(\"Items:\", items);\n\n// ========================\n// 4) Build final output\n// ========================\nconst finalOutput = items.map((item, idx) => {\n  const matchIds = resultMap[idx] || [];\n  const matchedSchedules = item.json.lich_cup.filter((_, sIdx) => matchIds.includes(sIdx));\n\n  return {\n    json: {\n      user: item.json.user,\n      lich_cup: matchedSchedules\n    }\n  };\n});\n\nreturn finalOutput;\n"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        80,
-        880
-      ],
-      "id": "1edef88f-b74b-4ee5-aaee-970d9ffe71b8",
-      "name": "Parse_AI_Result"
-    },
-    {
-      "parameters": {
-        "url": "https://cskh.evnspc.vn/TraCuu/GetThongTinLichNgungGiamCungCapDien",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "madvi",
-              "value": "={{ $('Re-mapping').item.json.area_code }}"
-            },
-            {
-              "name": "tuNgay",
-              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').toFormat('dd-LL-yyyy')}}"
-            },
-            {
-              "name": "denNgay",
-              "value": "={{$now.setZone('Asia/Ho_Chi_Minh').plus({days: 3}).toFormat('dd-LL-yyyy')}}"
-            },
-            {
-              "name": "ChucNang",
-              "value": "MaDonVi"
-            }
-          ]
-        },
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "User-Agent",
-              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -1696,
-        944
-      ],
-      "id": "7bb80fc1-f6f8-447e-a25b-053627e5a023",
-      "name": "Crawler",
-      "alwaysOutputData": true,
-      "retryOnFail": true,
-      "maxTries": 5,
-      "waitBetweenTries": 5000
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-4o-mini",
-          "mode": "list",
-          "cachedResultName": "GPT-4O-MINI"
-        },
-        "responses": {
-          "values": [
-            {
-              "role": "={{ $json.messages[0].role }}",
-              "content": "={{ $json.messages[0].content }}"
-            },
-            {
-              "role": "={{ $json.messages[1].role }}",
-              "content": "={{ $json.messages[1].content }}"
-            }
-          ]
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2,
-      "position": [
-        -272,
-        1088
-      ],
-      "id": "5d43a700-2482-4bcc-a2d0-a11ffdf92ec1",
-      "name": "AI Process",
-      "credentials": {
-        "openAiApi": {
-          "id": "bj8d1gcHs1tcHyCK",
-          "name": "OpenAi account"
         }
       }
     }
@@ -1880,7 +1880,7 @@
       "main": [
         [
           {
-            "node": "Append row in sheet",
+            "node": "Append Mailing History",
             "type": "main",
             "index": 0
           }
@@ -1964,10 +1964,9 @@
     "executionOrder": "v1",
     "timezone": "Asia/Jakarta",
     "callerPolicy": "workflowsFromSameOwner",
-    "executionTimeout": -1,
     "availableInMCP": false
   },
-  "versionId": "cd7db5bd-591d-4898-ad54-e8df66fc531b",
+  "versionId": "8d60567e-c3ff-4a0a-bc92-e94101a7bbc7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "c032ea0a5bf108863f2ed5a1e769a0889e7dcb3ee1b1ae1be52bd4ad18754b9d"
